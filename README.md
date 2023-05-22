@@ -1,0 +1,2 @@
+# ChineseTextClassification_Pytorch
+基于Pytroch框架实现中文文本分类模型，包含CNN、LSTM、BERT等模型结构
