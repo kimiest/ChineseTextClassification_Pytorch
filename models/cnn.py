@@ -9,6 +9,7 @@ class MyModel(nn.Module):
         self.plm = AutoModel.from_pretrained(Config.plm_path)
         for param in self.plm.parameters():
             param.requires_grad = False  # PLM参数是否一起训练
+        # nn.Conv2d(input_channel, output_channel, (weight, height))
         self.convs = nn.ModuleList(
             [nn.Conv2d(1, Config.num_filters, (k, 768)) for k in Config.filter_sizes])
         self.dropout = nn.Dropout(Config.dropout)
@@ -16,8 +17,8 @@ class MyModel(nn.Module):
         self.fc = nn.Linear(Config.num_filters * len(Config.filter_sizes), Config.num_classes)
 
     def conv_and_pool(self, x, conv):
-        x = F.relu(conv(x)).squeeze(3)
-        x = F.max_pool1d(x, x.size(2)).squeeze(2)
+        x = F.relu(conv(x)).squeeze(3)  # x.shape=(batch_size, output_channel, max_length-kener_size+1)
+        x = F.max_pool1d(x, x.size(2)).squeeze(2)  # x.shape=(batch_size, output_channel)
         return x
 
     def forward(self, batch_inputs):
